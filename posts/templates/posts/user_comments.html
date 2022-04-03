@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user_activity.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+{% block text %}
+    Created comments
+{% endblock %}
+{% block content %}
+    <div class="user-links">
+        <a href="{% url 'posts:user_posts' %}">
+            <div class="user-link">
+                Posts
+                <i class="far fa-clipboard"></i>
+            </div>
+        </a>
+        <a href="{% url 'posts:user_comments' %}">
+            <div class="user-link">
+                Comments
+                <i class="far fa-comment"></i>
+            </div>
+        </a>
+        <a href="{% url 'posts:user_likes' %}">
+            <div class="user-link">
+                Likes
+                <i class="far fa-heart"></i>
+            </div>
+        </a>
+        <a href="{% url 'posts:user_follows' %}">
+            <div class="user-link">
+                Follows
+                <i class="fas fa-user-friends"></i>
+            </div>
+        </a>
+    </div>
+
+    <div class="comments">
+    {% for comment in comments %}
+        <div class="comment">
+            <div class="topbar">
+                <a href="{{ comment.author.get_absolute_url }}" class="comment-link">
+                    <div class="link">
+                        <div class="profile-picture">
+                            <img src="{{ comment.author.profile.profile_picture.url }}">
+                        </div>
+                        <span>{{ comment.author }}</span>
+                    </div>
+                </a>
+                {% if request.user == comment.author %}
+                    <span class="delete-comment">
+                        <a href="#" onClick="document.getElementById('delete-form-{{ comment.id }}').submit()">
+                            <i class="far fa-trash-alt"></i>
+                            <form method="post" action="{% url 'posts:delete_comment' comment.id %}" id="delete-form-{{ comment.id }}">
+                                {% csrf_token %}
+                                <input type="hidden">
+                            </form>
+                        </a>
+                    </span>
+                {% endif %}
+            </div>
+            <p>{{ comment.text }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

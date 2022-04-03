@@ -1,0 +1,117 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/49b5438e0f.js" crossorigin="anonymous"></script>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    {% block extra_css %}
+    {% endblock %}
+</head>
+<body>
+<div class="container">
+    <div class="navigation">
+        <ul>
+            <li class="list">
+                <a>
+                    <span class="icon"><i class="fas fa-book"></i></span>
+                    <span class="title" style="font-weight: bold">MyLibrary</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="{% url 'posts:dashboard' %}" class="home-link">
+                    <span class="icon"><i class="fas fa-home"></i></span>
+                    <span class="title">Home</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="{% url 'books:bookshelf' %}">
+                    <span class="icon"><i class="fas fa-book"></i></span>
+                    <span class="title">My books</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="{% url 'posts:user_posts' %}">
+                    <span class="icon"><i class="far fa-comment-alt"></i></span>
+                    <span class="title">My activities</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="{% url 'edit' %}">
+                    <span class="icon"><i class="fas fa-user-edit"></i></span>
+                    <span class="title">Profile</span>
+                </a>
+            </li>
+            <li class="list">
+                <a href="{% url 'logout' %}">
+                    <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="title">Log out</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+            <div class="toggle">
+                <i class="fas fa-bars open"></i>
+            </div>
+            <div class="home-title">
+                <h2>{% block text %}Home{% endblock %}</h2>
+            </div>
+            {# search #}
+            <div class="search">
+                <form action="{% url 'posts:search_results' %}" method="GET">
+                    <label>
+                        <input type="text" placeholder="Search..." name="search" pattern="^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"
+                               title="Sorry, no special characters are allowed">
+                        <i class="fas fa-search"></i>
+                    </label>
+                </form>
+            </div>
+        </div>
+
+    {% block content %}
+
+    {% endblock %}
+    </div>
+</div>
+
+</body>
+
+<script>
+
+    let menuToggle = document.querySelector('.toggle');
+    let navigation = document.querySelector('.navigation')
+    let main = document.querySelector('.main')
+
+    menuToggle.onclick = function(){
+        menuToggle.classList.toggle('active');
+        main.classList.toggle('active');
+        navigation.classList.toggle('active');
+    }
+
+    
+    let links = document.querySelectorAll('li a')
+    let currentLocation = window.location.href
+    let homeLink = document.querySelector('.home-link')
+
+    for (let i= 0; i<links.length; i++){
+        if (links[i].href === currentLocation){
+            links[i].closest('li').classList.add('active')
+        } else if (currentLocation.indexOf(`${homeLink.href}?page`) !== -1){
+            homeLink.closest('li').classList.add('active')
+        }
+    }
+
+</script>
+
+{% block extra_js %}
+{% endblock %}
+
+</html>

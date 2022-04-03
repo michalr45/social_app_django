@@ -1,0 +1,88 @@
+// header
+
+header
+  .header-text
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: column
+    text-align: center
+    padding-bottom: 40px
+    padding-top: 50px
+
+  h1
+    text-transform: uppercase
+
+
+// forms
+.form-container
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: column
+  text-align: center
+
+  .helptext
+    display: none
+
+  label
+    display: block
+
+  input[type="submit"]
+    font-family: 'Montserrat', sans-serif
+
+  input[type="text"],
+  input[type="password"],
+  input[type="email"]
+    background-color: #ffff
+    outline: none
+    transition: all 0.3s ease-in-out
+
+    overflow: hidden
+    height: 62px
+    font-size: 18px
+    font-weight: 500
+    border: solid 2px transparent
+    font-family: 'Montserrat', sans-serif
+
+    display: inline-block
+    width: 30%
+    margin: 10px 0
+    padding: 10px
+    border-radius: 10px
+    box-shadow: 5px 5px 5px rgba(0,0,0,.6)
+
+  input[type="text"]:focus,
+  input[type="password"]:focus,
+  input[type="email"]:focus
+    border: solid 2px cornflowerblue
+
+  .form-div
+    width: 100%
+
+
+
+
+.submit-button
+  background-image: linear-gradient(to right, #FF512F 0%, #F09819  51%, #FF512F  100%)
+  cursor: pointer
+  border: none
+  margin: 10px
+  padding: 15px 45px
+  text-align: center
+  text-transform: uppercase
+  font-weight: bold
+  transition: 0.5s
+  background-size: 200% auto
+  color: white
+  border-radius: 10px
+  box-shadow: 0 3px 15px rgba(0,0,0,0.2)
+
+
+.submit-button:hover
+  background-position: right center /* change the direction of the change here */
+  color: #fff
+  text-decoration: none
+
+a
+  color: black

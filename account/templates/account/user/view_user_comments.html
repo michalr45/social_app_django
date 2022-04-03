@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user_detail.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="user-card">
+        <div class="profile-picture">
+            <img src="{{ user.profile.profile_picture.url }}">
+        </div>
+        <div class="user-information">
+            <span class="username">{{ user.username }}</span>
+
+            {% with total_followers=user.followers.count %}
+                <div class="follows">
+                    <span class="count-total">
+                            <span class="total">{{ total_followers }}</span>
+                            follower{{ total_followers|pluralize }}
+                    </span>
+                     <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button">
+                         {% if request.user not in user.followers.all %}
+                             Follow
+                         {% else %}
+                             Unfollow
+                         {% endif %}
+                     </a>
+                </div>
+            {% endwith %}
+        </div>
+    </div>
+
+
+    <div class="user-links">
+        <a href="{% url 'user_detail' user.username %}">
+            <div class="user-link">
+                Posts
+                <i class="far fa-clipboard"></i>
+            </div>
+        </a>
+        <a href="{% url 'view_user_comments' user.username %}">
+            <div class="user-link">
+                Comments
+                <i class="far fa-comment"></i>
+            </div>
+        </a>
+        <a href="{% url 'view_user_books' user.username %}">
+            <div class="user-link">
+                Books
+                <i class="fas fa-book"></i>
+            </div>
+        </a>
+    </div>
+
+    <div class="comments">
+    {% for comment in comments %}
+        <div class="comment">
+            <div class="topbar">
+                <a href="{{ comment.author.get_absolute_url }}" class="comment-link">
+                    <div class="link">
+                        <div class="profile-picture">
+                            <img src="{{ comment.author.profile.profile_picture.url }}">
+                        </div>
+                        <span>{{ comment.author }}</span>
+                    </div>
+                </a>
+                {% if request.user == comment.author %}
+                    <span class="delete-comment">
+                        <a href="#" onClick="document.getElementById('delete-form-{{ comment.id }}').submit()">
+                            <i class="far fa-trash-alt"></i>
+                            <form method="post" action="{% url 'posts:delete_comment' comment.id %}" id="delete-form-{{ comment.id }}">
+                                {% csrf_token %}
+                                <input type="hidden">
+                            </form>
+                        </a>
+                    </span>
+                {% endif %}
+            </div>
+            <p>{{ comment.text }}</p>
+        </div>
+    {% endfor %}
+    </div>
+
+
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+<script>
+
+
+    let followButton = document.querySelector('.follow');
+    let totalFollowers = document.querySelector('.count-total');
+
+    followButton.addEventListener('click', function sendPost(){
+        fetch('{% url 'user_follow' %}', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": Cookies.get('csrftoken'),
+            },
+            body: JSON.stringify({id: this.dataset.id, action: this.dataset.action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (String(data['status']) === 'followed') {
+                totalFollowers.textContent = parseInt(totalFollowers.textContent) + 1
+                this.textContent = 'Unfollow'
+                if (this.dataset.action === 'follow') {
+                    this.dataset.action = 'unfollow'
+                }
+            } else{
+                totalFollowers.textContent = parseInt(totalFollowers.textContent) - 1
+                this.textContent = 'Follow'
+                if (this.dataset.action === 'unfollow') {
+                    this.dataset.action = 'follow'
+                }
+            }
+        })
+    })
+
+
+</script>
+{% endblock %}

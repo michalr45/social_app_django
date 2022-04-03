@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/49b5438e0f.js" crossorigin="anonymous"></script>
+    <link href="{% static 'css/forms.css' %}" rel="stylesheet">
+</head>
+
+{% block content %}
+    <header>
+        <div class="header-text">
+            <h1>Register</h1>
+            <p>If you already have an account, <a href="{% url 'login' %}">you can login here</a></p>
+        </div>
+    </header>
+
+    <form action="." method="post">
+        {% csrf_token %}
+        <div class="form-container">
+            <div class="form-div">
+                {{ user_form.as_p }}
+            </div>
+            <p><input type="submit" value="Create an account" class="submit-button"></p>
+        </div>
+    </form>
+{% endblock %}

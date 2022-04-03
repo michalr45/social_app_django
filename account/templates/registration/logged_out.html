@@ -1,0 +1,19 @@
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log out</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/49b5438e0f.js" crossorigin="anonymous"></script>
+    <link href="{% static 'css/forms.css' %}" rel="stylesheet">
+</head>
+
+{% block content %}
+    <header>
+        <div class="header-text">
+            <h1>Logout</h1>
+            <p>You have been succesfully logout. You can <a href="{% url 'login' %}">log in here again</a></p>
+        </div>
+    </header>
+{% endblock %}

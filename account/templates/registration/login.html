@@ -1,0 +1,35 @@
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log in</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/49b5438e0f.js" crossorigin="anonymous"></script>
+    <link href="{% static 'css/forms.css' %}" rel="stylesheet">
+</head>
+
+
+{% block content %}
+    <header>
+        <div class="header-text">
+            <h1>Log in</h1>
+            <p>If you don't have an account yet, <a href="{% url 'register' %}">you can register here</a></p>
+        </div>
+    </header>
+
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div class="form-container">
+                <div class="form-div">
+                    {{ form.as_p }}
+                </div>
+                <input type="submit" value="zaloguj" class="submit-button">
+                <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+                or <a href="{% url "social:begin" "google-oauth2" %}">log in with Google</a>
+            </div>
+        </form>
+
+
+
+{% endblock %}

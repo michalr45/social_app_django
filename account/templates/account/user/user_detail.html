@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user_detail.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="user-card">
+        <div class="profile-picture">
+            <img src="{{ user.profile.profile_picture.url }}">
+        </div>
+        <div class="user-information">
+            <span class="username">{{ user.username }}</span>
+
+            {% with total_followers=user.followers.count %}
+                <div class="follows">
+                    <span class="count">
+                            <span class="count-total">{{ total_followers }}</span>
+                            follower{{ total_followers|pluralize }}
+                    </span>
+                     <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button">
+                         {% if request.user not in user.followers.all %}
+                             Follow
+                         {% else %}
+                             Unfollow
+                         {% endif %}
+                     </a>
+                </div>
+            {% endwith %}
+        </div>
+    </div>
+
+
+    <div class="user-links">
+        <a href="{% url 'user_detail' user.username %}">
+            <div class="user-link">
+                Posts
+                <i class="far fa-clipboard"></i>
+            </div>
+        </a>
+        <a href="{% url 'view_user_comments' user.username %}">
+            <div class="user-link">
+                Comments
+                <i class="far fa-comment"></i>
+            </div>
+        </a>
+        <a href="{% url 'view_user_books' user.username %}">
+            <div class="user-link">
+                Books
+                <i class="fas fa-book"></i>
+            </div>
+        </a>
+    </div>
+
+    <div class="post-list">
+        {% for post in user.posts.all %}
+            <div class="post-card">
+                <div class="topbar">
+                <a href="{{ post.user.get_absolute_url }}" class="profile-link">
+                    <div class="link">
+                        <div class="profile-picture">
+                            <img src="{{ post.user.profile.profile_picture.url }}">
+                        </div>
+                        <span>{{ post.user }}</span>
+                    </div>
+                </a>
+                     {% if request.user == post.user %}
+                    <span class="delete-post">
+                        <a href="#" onClick="document.getElementById('delete-form-{{ post.id }}').submit()">
+                            <i class="far fa-trash-alt"></i>
+                            <form method="post" action="{% url 'posts:delete_post' post.id %}" id="delete-form-{{ post.id }}">
+                                {% csrf_token %}
+                                <input type="hidden">
+                            </form>
+                        </a>
+                    </span>
+                {% endif %}
+                </div>
+                <p class="text">{{ post.text }}</p>
+                <div class="under-text">
+                     <span>
+                            <a  data-id="{{ post.id }}"
+                                data-action="{% if post in request.user.posts_liked.all %}un{% endif %}like"
+                                class="like button" id="like-button-{{ post.id }}">
+
+                                <i class="far fa-heart {% if request.user in post.users_like.all %}liked{% endif %}"
+                                   id="like-icon-{{ post.id }}"></i>
+
+                                <span class="count-total" id="like-count-{{ post.id }}">{{ post.users_like.all.count }}</span>
+                            </a>
+                        </span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="{% url 'posts:post_detail' post.slug %}" class="comment">
+                        <span><i class="far fa-comment"></i></span>
+                        <span class="count-total">{{ post.comments.all.count }}</span>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+<script>
+
+    let followButton = document.querySelector('.follow');
+    let totalFollowers = document.querySelector('.count-total');
+
+    followButton.addEventListener('click', function sendPost(){
+        fetch('{% url 'user_follow' %}', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": Cookies.get('csrftoken'),
+            },
+            body: JSON.stringify({id: this.dataset.id, action: this.dataset.action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (String(data['status']) === 'followed') {
+                totalFollowers.textContent = parseInt(totalFollowers.textContent) + 1
+                this.textContent = 'Unfollow'
+                if (this.dataset.action === 'follow') {
+                    this.dataset.action = 'unfollow'
+                }
+            } else{
+                totalFollowers.textContent = parseInt(totalFollowers.textContent) - 1
+                this.textContent = 'Follow'
+                if (this.dataset.action === 'unfollow') {
+                    this.dataset.action = 'follow'
+                }
+            }
+        })
+    })
+
+
+ {% for post in user.posts.all %}
+
+        document.querySelector('#like-button-{{ post.id }}').addEventListener('click', function sendPost(){
+            let likeIcon = document.querySelector('#like-icon-{{ post.id }}')
+            let totalLikes = document.querySelector('#like-count-{{ post.id }}')
+            fetch({% url "posts:like" %}, {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": Cookies.get('csrftoken'),
+                },
+                body: JSON.stringify({id: this.dataset.id, action: this.dataset.action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                likeIcon.classList.toggle('liked')
+
+                if(String(data['status']) === 'liked'){
+                    totalLikes.textContent = parseInt(totalLikes.textContent) + 1
+                    if (this.dataset.action === 'like'){
+                        this.dataset.action = 'unlike'
+                    }
+                } else{
+                    totalLikes.textContent = parseInt(totalLikes.textContent) - 1
+                    if (this.dataset.action === 'unlike'){
+                        this.dataset.action = 'like'
+                    }
+                }
+            return false
+            })
+        })
+        {% endfor %}
+
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+/mylibrary/.env
+/media/users/
+
+cert.crt
+cert.key
+
+
+# Pycharm stuff
+
+.idea

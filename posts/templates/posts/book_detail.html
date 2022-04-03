@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/book_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="book">
+    <div class="book-image">
+        <img src="{{ book.image }}">
+    </div>
+    <div class="top-info">
+        <p>Title: {{ book.title }}</p>
+        <p>Subtitle: {{ book.subtitle }}</p>
+        <p>Authors: {{ book.authors }}</p>
+        <p>Year: {{ book.year }}</p>
+        {% if book.isbn13 not in isbn_list %}
+            <a href="{% url 'books:save_book' book.isbn13 %}">Save book</a>
+        {% else %}
+            <a href="{% url 'books:delete_book' book.isbn13 %}">Remove book from collection</a>
+        {% endif %}
+    </div>
+    <div class="additional-info">
+        <p>Description: {{ book.desc }}</p>
+        <p>Pages: {{ book.pages }}</p>
+        <p>Publisher: {{ book.publisher }}</p>
+        <p>See book in itbook.store: <a href="{{ book.url }}">Link</a></p>
+        <p>isbn10: {{ book.isbn10 }}</p>
+        <p>isbn13: {{ book.isbn13 }}</p>
+        <p>{{ book.pdf }}</p>
+    </div>
+</div>
+
+{% endblock %}

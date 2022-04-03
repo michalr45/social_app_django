@@ -1,0 +1,156 @@
+// user card
+
+.user-card
+  width: calc(100% - 300px)
+
+  position: relative
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: center
+
+  .profile-picture
+      position: relative
+      width: 130px
+      height: 130px
+      border-radius: 50%
+      overflow: hidden
+      margin-right: 10px
+
+      img
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+
+  .user-information
+    display: flex
+    flex-direction: column
+    padding: 20px
+
+    .username
+      margin-bottom: 20px
+      font-weight: bold
+
+
+// user links
+
+.user-links
+  width: calc(100% - 300px)
+
+  position: relative
+  display: flex
+  align-items: center
+  justify-content: center
+
+  margin-bottom: 50px
+  margin-top: 30px
+
+  a
+    text-decoration: none
+    color: black
+
+    .user-link
+      padding: 30px
+      font-size: 1.2em
+      border: 2px solid transparent
+      border-radius: 40px
+
+
+    i
+      color: cornflowerblue
+      font-size: 1.3em
+
+  .user-link:hover
+    border: solid 2px cornflowerblue
+
+//    posts
+
+.post-list
+  width: calc(100% - 300px)
+
+  position: relative
+  display: flex
+  flex-direction: column
+  align-items: center
+
+  .topbar
+    display: flex
+    align-items: flex-start
+    justify-content: left
+    flex-direction: row
+
+  .delete-post
+    margin-left: auto
+    a
+      color: black
+      text-decoration: none
+      font-size: 20px
+
+
+// comments
+
+.comments
+  width: calc(100% - 300px)
+
+  position: relative
+  display: flex
+  flex-direction: column-reverse
+  align-items: center
+
+
+  .comment
+    width: 600px
+    height: auto
+    margin-bottom: 10px
+    margin-top: 10px
+    padding: 20px
+    border-top: 1px solid black
+
+    .delete-comment
+      margin-left: auto
+
+    .comment-link
+      padding-bottom: 10px
+      text-decoration: none
+      font-weight: bolder
+      color: black
+
+  .topbar
+    display: flex
+    align-items: flex-start
+    justify-content: left
+    flex-direction: row
+
+
+  .link
+    display: flex
+    justify-content: left
+    flex-direction: row
+    align-items: center
+
+    .profile-picture
+      position: relative
+      width: 40px
+      height: 40px
+      border-radius: 50%
+      overflow: hidden
+      margin-right: 10px
+
+      img
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+
+  p
+    margin-top: 20px
+
+  .delete-comment
+
+    a
+      color: black
+      text-decoration: none
+      font-size: 20px

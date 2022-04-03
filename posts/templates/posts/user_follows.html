@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user_activity.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+{% block text %}
+    Followed users
+{% endblock %}
+{% block content %}
+    <div class="user-links">
+        <a href="{% url 'posts:user_posts' %}">
+            <div class="user-link">
+                Posts
+                <i class="far fa-clipboard"></i>
+            </div>
+        </a>
+        <a href="{% url 'posts:user_comments' %}">
+            <div class="user-link">
+                Comments
+                <i class="far fa-comment"></i>
+            </div>
+        </a>
+        <a href="{% url 'posts:user_likes' %}">
+            <div class="user-link">
+                Likes
+                <i class="far fa-heart"></i>
+            </div>
+        </a>
+        <a href="{% url 'posts:user_follows' %}">
+            <div class="user-link">
+                Follows
+                <i class="fas fa-user-friends"></i>
+            </div>
+        </a>
+    </div>
+
+
+    <div class="follows-list">
+        {% for follower in follows %}
+            <div class="follower-card">
+                <a href="{{ follower.get_absolute_url }}">
+                    <div class="info">
+                        <div class="follower-profile-picture">
+                            <img src="{{ follower.profile.profile_picture.url }}">
+                        </div>
+                        {{ follower.username }}
+                    </div>
+                </a>
+                <span class="follow-toggle">
+                    <a href="#" data-id="{{ follower.id }}" data-action="{% if request.user in follower.followers.all %}un{% endif %}follow" class="follow-{{ follower.id }} button">
+                        {% if request.user not in follower.followers.all %}
+                            Follow
+                        {% else %}
+                            Unfollow
+                        {% endif %}
+                    </a>
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+<script>
+
+  {% for follower in follows %}
+
+      document.querySelector('.follow-{{ follower.id }}').addEventListener('click', function sendPost(){
+        fetch('{% url 'user_follow' %}', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": Cookies.get('csrftoken'),
+            },
+            body: JSON.stringify({id: this.dataset.id, action: this.dataset.action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (String(data['status']) === 'followed') {
+                this.textContent = 'Unfollow'
+                if (this.dataset.action === 'follow') {
+                    this.dataset.action = 'unfollow'
+                }
+            } else{
+                this.textContent = 'Follow'
+                if (this.dataset.action === 'unfollow') {
+                    this.dataset.action = 'follow'
+                }
+            }
+        })
+    })
+
+
+  {% endfor %}
+
+</script>
+{% endblock %}

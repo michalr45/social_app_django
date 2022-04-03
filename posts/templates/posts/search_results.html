@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user_activity.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search_results.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="search-options">
+        <a href="#">
+            <div class="option books-option">
+                Books
+            </div>
+        </a>
+        <a href="#">
+            <div class="option users-option">
+                Users
+            </div>
+        </a>
+    </div>
+
+    <div class="follows-list display-none">
+        {% for user in search_list %}
+            <div class="follower-card">
+                <a href="{{ user.get_absolute_url }}">
+                    <div class="info">
+                        <div class="follower-profile-picture">
+                            <img src="{{ user.profile.profile_picture.url }}">
+                        </div>
+                        {{ user.username }}
+                    </div>
+                </a>
+                <span class="follow-toggle">
+                    <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow-{{ user.id }} button">
+                        {% if request.user not in user.followers.all %}
+                            Follow
+                        {% else %}
+                            Unfollow
+                        {% endif %}
+                    </a>
+                </span>
+            </div>
+            {% empty %}
+                No users found
+        {% endfor %}
+    </div>
+    <div class="books-list">
+        {% for book in books_list %}
+            <a href="{% url 'posts:book_detail' book.isbn13 %}" class="book-card">
+                <div class="book-link">
+                    <p>{{ book.title }}</p>
+                    <img src="{{ book.image }}">
+                    <p>Click for details</p>
+                </div>
+            </a>
+        {% empty %}
+            <p>Sorry, looks like there are no results</p>
+        {% endfor %}
+    </div>
+
+    <div class="pages">
+        {# Previous page #}
+        {% if response_json.page != '1' %}
+            <a href="#" onclick="javascript:window.history.back(-1)">
+                <div class="nav-button">
+                   Previous
+                </div>
+            </a>
+        {% endif %}
+
+        {# next page #}
+        <a href="#" onclick="document.getElementById('next-page').submit()">
+            <div class="nav-button">Next
+                <form action="{% url 'posts:search_results' %}" method="GET" id="next-page">
+                    <input type="hidden" value="{{ query }}" name="search">
+                </form>
+            </div>
+        </a>
+    </div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+<script>
+    let booksBtn = document.querySelector('.books-option')
+    let usersBtn = document.querySelector('.users-option')
+    let usersList = document.querySelector('.follows-list')
+    let booksList = document.querySelector('.books-list')
+    let pages = document.querySelector('.pages')
+
+    booksBtn.addEventListener('click', function (){
+        if (booksList.classList.contains('display-none')){
+            booksList.classList.remove('display-none');
+            pages.classList.remove('display-none');
+            usersList.classList.add('display-none');
+        } else {
+            {#  pass  #}
+        }
+    })
+
+    usersBtn.addEventListener('click', function (){
+        if (usersList.classList.contains('display-none')){
+            usersList.classList.remove('display-none');
+            booksList.classList.add('display-none');
+            pages.classList.add('display-none');
+        } else {
+            {#  pass  #}
+        }
+    })
+
+
+
+    {% for user in search_list %}
+
+        document.querySelector('.follow-{{ user.id }}').addEventListener('click', function sendPost(){
+        fetch('{% url 'user_follow' %}', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": Cookies.get('csrftoken'),
+            },
+            body: JSON.stringify({id: this.dataset.id, action: this.dataset.action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (String(data['status']) === 'followed') {
+                this.textContent = 'Unfollow'
+                if (this.dataset.action === 'follow') {
+                    this.dataset.action = 'unfollow'
+                }
+            } else{
+                this.textContent = 'Follow'
+                if (this.dataset.action === 'unfollow') {
+                    this.dataset.action = 'follow'
+                }
+            }
+        })
+        })
+    {% endfor %}
+
+
+</script>
+{% endblock %}

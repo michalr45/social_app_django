@@ -1,0 +1,30 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/49b5438e0f.js" crossorigin="anonymous"></script>
+    <link href="{% static 'css/home_page.css' %}" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="site-info">
+        <h2>Welcome to &nbsp;&nbsp;<i class="fas fa-book"></i> ITLibrary</h2>
+        <h4>A website, where you can discover new IT books and share your thoughts with other specialists</h4>
+    </div>
+    <div class="login-info">
+        <p>To start using the site, <a href="{% url 'register' %}">register here</a></p>
+        <p>Or <a href="{% url "social:begin" "google-oauth2" %}">sign-in with google</a></p>
+        <p>If you already have an account, <a href="{% url 'login' %}">log in here</a></p>
+    </div>
+</div>
+
+</body>
+</html>

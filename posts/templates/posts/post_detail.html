@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/post_detail.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="post-div">
+    <div class="post-card">
+        <a href="{{ post.user.get_absolute_url }}" class="profile-link">
+            <div class="link">
+                <div class="profile-picture">
+                    <img src="{{ post.user.profile.profile_picture.url }}">
+                </div>
+                <span>{{ post.user }}</span>
+            </div>
+        </a>
+        <p class="text">{{ post.text }}</p>
+        <div class="under-text">
+                        <span>
+                            <a href="#" data-id="{{ post.id }}"
+                                data-action="{% if post in request.user.posts_liked.all %}un{% endif %}like"
+                                class="like button">
+
+                                <i class="far fa-heart {% if request.user in post.users_like.all %}liked{% endif %}"></i>
+
+                                <span class="count-total">{{ post.users_like.all.count }}</span>
+                            </a>
+                        </span>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'posts:post_detail' post.slug %}" class="comment">
+                <span><i class="far fa-comment"></i></span>
+                <span class="count-total">{{ post.comments.all.count }}</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="create-comment">
+    <i class="far fa-comment"></i>
+    <form method="POST">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <input type="submit" value="submit">
+    </form>
+</div>
+
+<div class="comments">
+    {% for comment in post.comments.all %}
+        <div class="comment">
+            <div class="topbar">
+                <a href="{{ comment.author.get_absolute_url }}" class="comment-link">
+                    <div class="link">
+                        <div class="profile-picture">
+                            <img src="{{ comment.author.profile.profile_picture.url }}">
+                        </div>
+                        <span>{{ comment.author }}</span>
+                    </div>
+                </a>
+                {% if request.user == comment.author %}
+                    <span class="delete-comment">
+                        <a href="#" onClick="document.getElementById('delete-form-{{ comment.id }}').submit()">
+                            <i class="far fa-trash-alt"></i>
+                            <form method="post" action="{% url 'posts:delete_comment' comment.id %}" id="delete-form-{{ comment.id }}">
+                                {% csrf_token %}
+                                <input type="hidden">
+                            </form>
+                        </a>
+                    </span>
+                {% endif %}
+            </div>
+            <p>{{ comment.text }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+    <script>
+
+        let likeButton = document.querySelector('.like')
+        let likeIcon = document.querySelector('.fa-heart')
+        let totalLikes = document.querySelector('.count-total')
+
+        likeButton.addEventListener('click', function sendPost(){
+            fetch({% url "posts:like" %}, {
+                method: "POST"
+                credentials: "same-origin",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": Cookies.get('csrftoken'),
+                },
+                body: JSON.stringify({id: this.dataset.id, action: this.dataset.action })
+            })
+            .then(response => response.json())
+            .then(data => {
+                likeIcon.classList.toggle('liked')
+
+                if(String(data['status']) === 'liked'){
+                    totalLikes.textContent = parseInt(totalLikes.textContent) + 1
+                    if (this.dataset.action === 'like'){
+                        this.dataset.action = 'unlike'
+                    }
+                } else{
+                    totalLikes.textContent = parseInt(totalLikes.textContent) - 1
+                    if (this.dataset.action === 'unlike'){
+                        this.dataset.action = 'like'
+                    }
+                }
+            })
+        })
+
+
+    </script>
+{% endblock %}
