@@ -32,7 +32,6 @@ PostgreSQL database fields:
 DB_NAME
 DB_USER
 DB_PASSWORD
-
 ```
 
 Google OAuth keys, needed only to authenticate with google account:
