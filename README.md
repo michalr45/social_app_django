@@ -11,7 +11,7 @@
 - creating and managing comments
 - liking posts
 - following other users
-- searching for books using [itbook.store api](api.itbook.store)
+- searching for books using [itbook.store api](https://api.itbook.store)
 - saving books to user's bookshelf
 
 ## Installation
