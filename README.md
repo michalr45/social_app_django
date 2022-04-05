@@ -49,3 +49,11 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
 
 To use google authentication, run server using: `python manage.py runserver_plus --cert-file cert.crt`
 Please note that appropriate google API configuration is also required for this functionality to work
+
+## Screenshots
+![homepage](https://user-images.githubusercontent.com/68167747/161774289-7c009fce-9aca-4da3-80b7-84caed751faa.jpg)
+![myact](https://user-images.githubusercontent.com/68167747/161775317-6671fb68-2282-4237-8ff9-a1a45e87fb5f.jpg)
+![mybooks](https://user-images.githubusercontent.com/68167747/161775339-3ebed6a5-b7f0-41c4-868a-eae4b389879a.jpg)
+
+
+
