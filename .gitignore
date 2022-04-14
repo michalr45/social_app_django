@@ -4,7 +4,10 @@
 cert.crt
 cert.key
 
+.env
+
 
 # Pycharm stuff
 
 .idea
+
