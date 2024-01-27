@@ -1,7 +1,7 @@
 
 # django social app
 
-**Django** based social media web application
+**Django** based social media web application that also utilizes Google's and other external APIs
 
 ## Features
 
